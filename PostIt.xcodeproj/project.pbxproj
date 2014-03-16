@@ -21,6 +21,16 @@
 		AC27EF1718D4658000C9E992 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC27EEF918D4657700C9E992 /* UIKit.framework */; };
 		AC27EF1F18D4658000C9E992 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF1D18D4658000C9E992 /* InfoPlist.strings */; };
 		AC27EF2118D4658000C9E992 /* PostItTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AC27EF2018D4658000C9E992 /* PostItTests.m */; };
+		AC27EF2D18D4B09800C9E992 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC27EF2C18D4B09800C9E992 /* Social.framework */; };
+		AC27EF2E18D4B36500C9E992 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC27EF2A18D4B08400C9E992 /* Twitter.framework */; };
+		AC27EF3018D4B64C00C9E992 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC27EF2F18D4B64C00C9E992 /* Accounts.framework */; };
+		AC27EF3A18D4DE7500C9E992 /* fb.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF3718D4DE7500C9E992 /* fb.jpg */; };
+		AC27EF3B18D4DE7500C9E992 /* instagram.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF3818D4DE7500C9E992 /* instagram.jpg */; };
+		AC27EF3C18D4DE7500C9E992 /* twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF3918D4DE7500C9E992 /* twitter.png */; };
+		AC27EF4118D4E43D00C9E992 /* cross.png in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF3E18D4E43D00C9E992 /* cross.png */; };
+		AC27EF4218D4E43D00C9E992 /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF3F18D4E43D00C9E992 /* error.png */; };
+		AC27EF4318D4E43D00C9E992 /* tick.png in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF4018D4E43D00C9E992 /* tick.png */; };
+		AC27EF4618D59E7D00C9E992 /* ResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC27EF4518D59E7D00C9E992 /* ResultViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +63,17 @@
 		AC27EF1C18D4658000C9E992 /* PostItTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PostItTests-Info.plist"; sourceTree = "<group>"; };
 		AC27EF1E18D4658000C9E992 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AC27EF2018D4658000C9E992 /* PostItTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PostItTests.m; sourceTree = "<group>"; };
+		AC27EF2A18D4B08400C9E992 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
+		AC27EF2C18D4B09800C9E992 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		AC27EF2F18D4B64C00C9E992 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		AC27EF3718D4DE7500C9E992 /* fb.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = fb.jpg; path = Images/fb.jpg; sourceTree = "<group>"; };
+		AC27EF3818D4DE7500C9E992 /* instagram.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = instagram.jpg; path = Images/instagram.jpg; sourceTree = "<group>"; };
+		AC27EF3918D4DE7500C9E992 /* twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = twitter.png; path = Images/twitter.png; sourceTree = "<group>"; };
+		AC27EF3E18D4E43D00C9E992 /* cross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cross.png; path = Images/cross.png; sourceTree = "<group>"; };
+		AC27EF3F18D4E43D00C9E992 /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = error.png; path = Images/error.png; sourceTree = "<group>"; };
+		AC27EF4018D4E43D00C9E992 /* tick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tick.png; path = Images/tick.png; sourceTree = "<group>"; };
+		AC27EF4418D59E7D00C9E992 /* ResultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultViewController.h; sourceTree = "<group>"; };
+		AC27EF4518D59E7D00C9E992 /* ResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResultViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +81,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC27EF3018D4B64C00C9E992 /* Accounts.framework in Frameworks */,
+				AC27EF2E18D4B36500C9E992 /* Twitter.framework in Frameworks */,
+				AC27EF2D18D4B09800C9E992 /* Social.framework in Frameworks */,
 				AC27EEF818D4657700C9E992 /* CoreGraphics.framework in Frameworks */,
 				AC27EEFA18D4657700C9E992 /* UIKit.framework in Frameworks */,
 				AC27EEF618D4657700C9E992 /* Foundation.framework in Frameworks */,
@@ -101,6 +125,9 @@
 		AC27EEF418D4657700C9E992 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AC27EF2F18D4B64C00C9E992 /* Accounts.framework */,
+				AC27EF2C18D4B09800C9E992 /* Social.framework */,
+				AC27EF2A18D4B08400C9E992 /* Twitter.framework */,
 				AC27EEF518D4657700C9E992 /* Foundation.framework */,
 				AC27EEF718D4657700C9E992 /* CoreGraphics.framework */,
 				AC27EEF918D4657700C9E992 /* UIKit.framework */,
@@ -117,7 +144,10 @@
 				AC27EF0718D4657900C9E992 /* Main.storyboard */,
 				AC27EF0A18D4657900C9E992 /* ViewController.h */,
 				AC27EF0B18D4657900C9E992 /* ViewController.m */,
+				AC27EF4418D59E7D00C9E992 /* ResultViewController.h */,
+				AC27EF4518D59E7D00C9E992 /* ResultViewController.m */,
 				AC27EF0D18D4657A00C9E992 /* Images.xcassets */,
+				AC27EF3D18D4DE7F00C9E992 /* Icons */,
 				AC27EEFC18D4657800C9E992 /* Supporting Files */,
 			);
 			path = PostIt;
@@ -150,6 +180,19 @@
 				AC27EF1D18D4658000C9E992 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AC27EF3D18D4DE7F00C9E992 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				AC27EF3E18D4E43D00C9E992 /* cross.png */,
+				AC27EF3F18D4E43D00C9E992 /* error.png */,
+				AC27EF4018D4E43D00C9E992 /* tick.png */,
+				AC27EF3718D4DE7500C9E992 /* fb.jpg */,
+				AC27EF3818D4DE7500C9E992 /* instagram.jpg */,
+				AC27EF3918D4DE7500C9E992 /* twitter.png */,
+			);
+			name = Icons;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,8 +271,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC27EF4118D4E43D00C9E992 /* cross.png in Resources */,
 				AC27EF0E18D4657A00C9E992 /* Images.xcassets in Resources */,
+				AC27EF4318D4E43D00C9E992 /* tick.png in Resources */,
+				AC27EF3A18D4DE7500C9E992 /* fb.jpg in Resources */,
 				AC27EF0018D4657800C9E992 /* InfoPlist.strings in Resources */,
+				AC27EF3C18D4DE7500C9E992 /* twitter.png in Resources */,
+				AC27EF3B18D4DE7500C9E992 /* instagram.jpg in Resources */,
+				AC27EF4218D4E43D00C9E992 /* error.png in Resources */,
 				AC27EF0918D4657900C9E992 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -252,6 +301,7 @@
 				AC27EF0C18D4657900C9E992 /* ViewController.m in Sources */,
 				AC27EF0618D4657900C9E992 /* AppDelegate.m in Sources */,
 				AC27EF0218D4657800C9E992 /* main.m in Sources */,
+				AC27EF4618D59E7D00C9E992 /* ResultViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

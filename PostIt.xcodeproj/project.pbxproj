@@ -31,6 +31,7 @@
 		AC27EF4218D4E43D00C9E992 /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF3F18D4E43D00C9E992 /* error.png */; };
 		AC27EF4318D4E43D00C9E992 /* tick.png in Resources */ = {isa = PBXBuildFile; fileRef = AC27EF4018D4E43D00C9E992 /* tick.png */; };
 		AC27EF4618D59E7D00C9E992 /* ResultViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AC27EF4518D59E7D00C9E992 /* ResultViewController.m */; };
+		AC8D9E8E18D7589E002ECEA2 /* Instagram.m in Sources */ = {isa = PBXBuildFile; fileRef = AC8D9E8D18D7589E002ECEA2 /* Instagram.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,8 @@
 		AC27EF4018D4E43D00C9E992 /* tick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tick.png; path = Images/tick.png; sourceTree = "<group>"; };
 		AC27EF4418D59E7D00C9E992 /* ResultViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultViewController.h; sourceTree = "<group>"; };
 		AC27EF4518D59E7D00C9E992 /* ResultViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResultViewController.m; sourceTree = "<group>"; };
+		AC8D9E8C18D7589E002ECEA2 /* Instagram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instagram.h; sourceTree = "<group>"; };
+		AC8D9E8D18D7589E002ECEA2 /* Instagram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Instagram.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +147,8 @@
 				AC27EF0718D4657900C9E992 /* Main.storyboard */,
 				AC27EF0A18D4657900C9E992 /* ViewController.h */,
 				AC27EF0B18D4657900C9E992 /* ViewController.m */,
+				AC8D9E8C18D7589E002ECEA2 /* Instagram.h */,
+				AC8D9E8D18D7589E002ECEA2 /* Instagram.m */,
 				AC27EF4418D59E7D00C9E992 /* ResultViewController.h */,
 				AC27EF4518D59E7D00C9E992 /* ResultViewController.m */,
 				AC27EF0D18D4657A00C9E992 /* Images.xcassets */,
@@ -301,6 +306,7 @@
 				AC27EF0C18D4657900C9E992 /* ViewController.m in Sources */,
 				AC27EF0618D4657900C9E992 /* AppDelegate.m in Sources */,
 				AC27EF0218D4657800C9E992 /* main.m in Sources */,
+				AC8D9E8E18D7589E002ECEA2 /* Instagram.m in Sources */,
 				AC27EF4618D59E7D00C9E992 /* ResultViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,6 +512,7 @@
 				AC27EF2618D4658000C9E992 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AC27EF2718D4658000C9E992 /* Build configuration list for PBXNativeTarget "PostItTests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +521,7 @@
 				AC27EF2918D4658000C9E992 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

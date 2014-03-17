@@ -20,7 +20,7 @@
 {
     self.view.backgroundColor   =   [UIColor whiteColor];
     [self addDoneButton];
-    _pending    =   [[NSMutableDictionary alloc] init];
+    
     UIActivityIndicatorView *activityIndicator  =   [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     [activityIndicator setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height/2)];
     [activityIndicator startAnimating];
@@ -40,6 +40,9 @@
     // Do any additional setup after loading the view.
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -47,10 +50,12 @@
 }
 
 - (void)addDoneButton {
-    UIButton *button    =   [UIButton buttonWithType:UIButtonTypeRoundedRect ] ;
-    [button setFrame: CGRectMake((self.view.frame.size.width-70)/2, self.view.frame.size.height-100, 70, 40)];
-    [button setTitle:@"DONE" forState:UIControlStateNormal];
+    UIButton *button    =   [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button setFrame:CGRectMake((self.view.frame.size.width-270)/2, self.view.frame.size.height-100, 270, 40)];
+    [button setTitle:@"        DONE        " forState:UIControlStateNormal];
     [button addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
+    [button setEnabled:NO];
+    button.tag  =   100;
     [self.view addSubview:button];
 }
 
@@ -59,21 +64,33 @@
         [_delegate performSelector:@selector(dismissResultView)];
     }
 }
+
+
 - (void)showResultViewForSites:(NSDictionary *)sites {
+    _pending    =   [[NSMutableDictionary alloc] init];
     _sites  =   sites;
     int startingPoint = 0;
     int counter = 0;
     for (id key in _sites) {
         counter ++;
         if ([_sites[key] isEqualToString:@"1"]) {
-            UILabel *label  =   [[UILabel alloc] initWithFrame:CGRectMake(30, self.view.frame.size.height/2 +  startingPoint, self.view.frame.size.width, 30)];
-            label.text  =   [NSString stringWithFormat:@"%@  Working...",key];
-            label.tag   =   counter;
-            [self.view addSubview:label];
-            startingPoint += 40;
+            if (![key isEqualToString:@"IG"]) {
+                UILabel *label  =   [[UILabel alloc] initWithFrame:CGRectMake(30, self.view.frame.size.height/2 +  startingPoint, self.view.frame.size.width, 30)];
+                label.text  =   [NSString stringWithFormat:@"%@  Working...",key];
+                label.tag   =   counter;
+                [self.view addSubview:label];
+                startingPoint += 40;
+            }
+            else{
+                UIButton *doneButton    =   (UIButton *)[self.view viewWithTag:100];
+                [doneButton setTitle:@"Continue to Post on Instagram" forState:UIControlStateNormal];
+            }
             [_pending setObject:@"1" forKey:key];
+            
         }
+        
     }
+    [self changeButtonEnabled:YES];
 }
 
 - (void)updateResultForSite:(NSDictionary *)site {
@@ -89,10 +106,28 @@
                 label.text  =   [NSString stringWithFormat:@"%@    %@",key,site[siteName]];
             }];
         }
-        
+    }
+    
+    [self changeButtonEnabled:YES];
+    
+}
+
+- (void)changeButtonEnabled:(BOOL)enabled {
+    if (_pending.count == 1 && [_pending[@"IG"] isEqualToString:@"1"]) {
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [[self.view viewWithTag:99] removeFromSuperview];
+            UIButton *doneButton    =   (UIButton *)[self.view viewWithTag:100];
+            [doneButton setEnabled:enabled];
+            [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+        }];
     }
     if (_pending.count == 0) {
-        [[self.view viewWithTag:99] removeFromSuperview];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [[self.view viewWithTag:99] removeFromSuperview];
+            UIButton *doneButton    =   (UIButton *)[self.view viewWithTag:100];
+            [doneButton setEnabled:enabled];
+            [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+        }];
     }
 }
 /*

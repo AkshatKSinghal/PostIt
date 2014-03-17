@@ -10,6 +10,7 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 #import "ResultViewController.h"
+#import "Instagram.h"
 
 
 @interface ViewController ()
@@ -87,6 +88,10 @@ UIImagePickerController *imagePickerController;
         if (granted) {
             NSArray *accounts = [_accountStore accountsWithAccountType:twitterType];
             NSURL *url = [NSURL URLWithString:@"https://api.twitter.com/1.1/statuses/update_with_media.json"];
+            if (image == nil) {
+                url = [NSURL URLWithString:@"https://api.twitter.com"
+                       @"/1.1/statuses/update.json"];
+            }
             NSDictionary *params = @{@"status" : status};
             SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter
                                                     requestMethod:SLRequestMethodPOST
@@ -128,7 +133,7 @@ UIImagePickerController *imagePickerController;
                                                      JSONObjectWithData:responseData
                                                      options:NSJSONReadingMutableContainers
                                                      error:NULL];
-                NSLog(@"[SUCCESS!] Facebook Post with ID: %@", postResponseData[@"id_str"]);
+                NSLog(@"[SUCCESS!] Facebook Post with response %@",postResponseData);
                 [_resultViewController updateResultForSite:[NSDictionary dictionaryWithObject:@"SUCCESS" forKey:@"FB"]];
             }
             else {
@@ -146,19 +151,30 @@ UIImagePickerController *imagePickerController;
     ACAccountStoreRequestAccessCompletionHandler accountStoreHandler =
     ^(BOOL granted, NSError *error) {
         if (granted) {
-            NSArray *accounts = [_accountStore accountsWithAccountType:facebookType];
-            NSURL *url = [NSURL URLWithString:@"https://graph.facebook.com/me/feed"];
-            NSDictionary *params = @{@"message" : status};
+            ACAccount* facebookAccount = [[_accountStore accountsWithAccountType:facebookType] lastObject];
+            NSURL *url = [NSURL URLWithString:@"https://graph.facebook.com/me/photos"];
+            NSDictionary *params = @{@"access_token":facebookAccount.credential.oauthToken,
+                                     @"message" : status,@"picture" : @"image"};
+            if (image == nil) {
+                url = [NSURL URLWithString:@"https://graph.facebook.com/me/feed"];
+                params = @{@"access_token":facebookAccount.credential.oauthToken,
+                                         @"message" : status};
+                
+            }
+            
+            
             SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter
                                                     requestMethod:SLRequestMethodPOST
                                                               URL:url
                                                        parameters:params];
-            NSData *imageData = UIImageJPEGRepresentation(image, 1.f);
-            [request addMultipartData:imageData
-                             withName:@"source"
-                                 type:@"multipart/form-data"
-                             filename:@"image.jpg"];
-            [request setAccount:[accounts lastObject]];
+            if (image != nil) {
+                NSData *imageData = UIImagePNGRepresentation(image);
+                [request addMultipartData:imageData
+                                 withName:@"source"
+                                     type:@"multipart/form-data"
+                                 filename:@"image"];
+            }
+            
             [request performRequestWithHandler:requestHandler];
         }
         else {
@@ -185,11 +201,15 @@ UIImagePickerController *imagePickerController;
                                         completion:accountStoreHandler];
 }
 
+- (void)postToInstagram {
+    [Instagram postImage:_imageView.image withCaption:_textBox.text inView:self.view];
+}
+
+
 - (void)authorizeTwitterWithAlert:(UIAlertView *)alertBox {
     ACAccountType *twitterType =    [_accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     ACAccountStoreRequestAccessCompletionHandler accountStoreHandler =
     ^(BOOL granted, NSError *error) {
-        NSLog(@"TWITTER %hhd",granted);
         if (!granted) {
             TW  =   NO;
             [alertBox dismissWithClickedButtonIndex:0 animated:NO];
@@ -210,7 +230,6 @@ UIImagePickerController *imagePickerController;
     ACAccountType *facebookType =    [_accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierFacebook];
     ACAccountStoreRequestAccessCompletionHandler accountStoreHandler =
     ^(BOOL granted, NSError *error) {
-        NSLog(@"ERROR %@",error);
         if (!granted) {
             FB  =   NO;
             [alertBox dismissWithClickedButtonIndex:0 animated:NO];
@@ -241,18 +260,34 @@ UIImagePickerController *imagePickerController;
         errorImageView.tag  =   200 + tag;
         [self.view   addSubview:errorImageView];
         [(UIImageView *)[self.view viewWithTag:tag+100] setAlpha:0];
-        [(UIActivityIndicatorView *)[self.view viewWithTag:99] removeFromSuperview];
+        [self removeSubViewWithTag:99];
     }];
 }
 
+- (void)removeSubViewWithTag:(int)tag {
+    [[self.view viewWithTag:tag] removeFromSuperview];
+}
 - (void)removeErrorForSiteWithTag:(int)tag {
     [(UIImageView *)[self.view viewWithTag:tag+100] setAlpha:1];
-    [(UIImageView *)[self.view viewWithTag:tag+200] removeFromSuperview];
-    [(UIActivityIndicatorView *)[self.view viewWithTag:99] removeFromSuperview];
+    [self removeSubViewWithTag:tag+200];
+    [self removeSubViewWithTag:99];
 }
 
 - (IBAction)postIt:(id)sender {
-    NSLog(@"%hhd %hhd %hhd",FB,TW,IG);
+    if (IG && _imageView.image == nil) {
+        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Select Image for Instagram" delegate:self cancelButtonTitle:@"Skip Instagram" otherButtonTitles:@"Select Image", nil] show];
+        return;
+    }
+    if ((int)FB + (int)TW + (int)IG == 0) {
+        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Please Select Atleast One Account" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] show];
+        return;
+    }
+    
+    if (TW && _textBox.text.length > 140) {
+        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Tweet Limit 140 Characters" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Truncate n Tweet", nil] show];
+        TW = NO;
+        return;
+    }
     if (FB) {
         //        NSLog(@"FB");
         [self postImageToFacebook:_imageView.image withStatus:_textBox.text];
@@ -261,16 +296,18 @@ UIImagePickerController *imagePickerController;
         //        NSLog(@"TW");
         [self postImageToTwitter:_imageView.image withStatus:_textBox.text];
     }
-    if (IG) {
-        NSLog(@"IG");
-        
+    if (IG && !FB && !TW) {
+        [self postToInstagram];
     }
-    ResultViewController *resultViewController  =   [[ResultViewController alloc]init];
-    resultViewController.delegate   =   self;
-    _resultViewController   =   resultViewController;
-    [self presentViewController:resultViewController animated:YES completion:^{
-        [resultViewController showResultViewForSites:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%hhd",FB],@"FB",[NSString stringWithFormat:@"%hhd",TW],@"TW",[NSString stringWithFormat:@"%hhd",IG],@"IG",nil]];
-    }];
+    else {
+        ResultViewController *resultViewController  =   [[ResultViewController alloc]init];
+        resultViewController.delegate   =   self;
+        _resultViewController   =   resultViewController;
+        [self presentViewController:resultViewController animated:YES completion:^{
+            [resultViewController showResultViewForSites:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%hhd",FB],@"FB",[NSString stringWithFormat:@"%hhd",TW],@"TW",[NSString stringWithFormat:@"%hhd",IG],@"IG",nil]];
+        }];
+    }
+    
 }
 
 
@@ -290,7 +327,7 @@ UIImagePickerController *imagePickerController;
     }];
 }
 
-- (IBAction)enableDisableButton:(id)sender {
+- (IBAction)addRemoveSites:(id)sender {
     UIButton *button    =   (UIButton *)sender;
     UIImageView *imageView  =   (UIImageView *)[self.view viewWithTag:button.tag+100];
     imageView.highlighted   =   !imageView.highlighted;
@@ -305,7 +342,7 @@ UIImagePickerController *imagePickerController;
         case 101:
             FB  =   imageView.highlighted;
             if (imageView.highlighted) {
-                UIAlertView *alertBox = [[UIAlertView alloc] initWithTitle:@"Authorizing" message:@"Please Wait" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+                UIAlertView *alertBox = [[UIAlertView alloc] initWithTitle:@"Authorizing" message:@"Please Wait" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                 [alertBox show];
                 [self authorizeFacebookWithAlert:alertBox];
             }
@@ -313,14 +350,31 @@ UIImagePickerController *imagePickerController;
                 [self removeErrorForSiteWithTag:101];
             break;
         case 102:
-            IG  =   imageView.highlighted;
+            if (imageView.highlighted) {
+                if ([Instagram isAppInstalled]) {
+                    [self removeSubViewWithTag:99];
+                    IG  =   imageView.highlighted;
+                }
+                else {
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Instagram Not Installed" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Install App", nil] show];
+                    imageView.highlighted   =   !imageView.highlighted;
+                }
+            }
+            
+            
             break;
         case 103:
-            TW  =   imageView.highlighted;
             if (imageView.highlighted) {
-                UIAlertView *alertBox = [[UIAlertView alloc] initWithTitle:@"Authorizing" message:@"Please Wait" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-                [alertBox show];
-                [self authorizeTwitterWithAlert:alertBox];
+                if (_textBox.text.length > 140) {
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Tweet Limit 140" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Truncate Text", nil] show];
+                }
+                else {
+                    TW  =   YES;
+                    UIAlertView *alertBox = [[UIAlertView alloc] initWithTitle:@"Authorizing" message:@"Please Wait" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                    [alertBox show];
+                    [self authorizeTwitterWithAlert:alertBox];
+                }
+                    
             }
             else
                 [self removeErrorForSiteWithTag:103];
@@ -361,6 +415,10 @@ UIImagePickerController *imagePickerController;
 
 
 - (void)textViewDidChange:(UITextView *)textView{
+    if (textView.text.length > 140 && TW) {
+        [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Tweet Limit 140 Characters" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Truncate", nil] show];
+        return;
+    }
     if ([textView.text isEqualToString:@""])
         [[self.view viewWithTag:1] setAlpha:1];
     else
@@ -369,24 +427,70 @@ UIImagePickerController *imagePickerController;
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     currentText =   _textBox.text;
-    self.navigationItem.rightBarButtonItem  =   [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(removeKeyboard)];
-    self.navigationItem.leftBarButtonItem  =   [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(editCancelled)];
-    
-}
-
-- (void)removeKeyboard {
-    [_textBox resignFirstResponder];
+    [self addEditButtons];
 }
 
 - (void)editCancelled {
     _textBox.text   =   currentText;
     if ([_textBox.text isEqualToString:@""])
         [[self.view viewWithTag:1] setAlpha:1];
-    [self removeKeyboard];
+    else
+        [[self.view viewWithTag:1] setAlpha:0];
+    [self editDone];
+}
+
+- (void)editDone {
+    [_textBox resignFirstResponder];
+    [self removeEditButtons];
+}
+
+- (void)addEditButtons {
+    self.navigationItem.rightBarButtonItem  =   [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(editDone)];
+    self.navigationItem.leftBarButtonItem  =   [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(editCancelled)];
+    
+}
+
+- (void)removeEditButtons {
+    self.navigationItem.rightBarButtonItem  =   nil;
+    self.navigationItem.leftBarButtonItem   =   nil;
 }
 
 - (void)dismissResultView {
     [self dismissViewControllerAnimated:YES completion:nil];
+    if (IG) {
+        [self performSelector:@selector(postToInstagram) withObject:nil afterDelay:1];
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == [alertView cancelButtonIndex]) {
+        if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Skip Instagram"]) {
+            IG = NO;
+            UIButton *IGButton  =   (UIButton *)[self.view viewWithTag:102];
+            [self addRemoveSites:IGButton];
+            [self postIt:nil];
+        }
+        else
+            return;
+    }
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Truncate"] )
+        _textBox.text   =   [_textBox.text substringToIndex:140];
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Truncate n Tweet"])
+        [self postImageToTwitter:_imageView.image withStatus:[_textBox.text substringToIndex:140]];
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Truncate Text"])
+    {
+        _textBox.text   =   [_textBox.text substringToIndex:140];
+        TW  =   YES;
+        UIAlertView *alertBox = [[UIAlertView alloc] initWithTitle:@"Authorizing" message:@"Please Wait" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alertBox show];
+        [self authorizeTwitterWithAlert:alertBox];
+    }
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Install App"]) {
+        [self removeSubViewWithTag:99];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms://itunes.apple.com/in/app/instagram/id389801252?mt=8ign-msr=https%3A%2F%2Fwww.google.co.in%2F"]];
+    }
+    else if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Select Image"])
+        [self showImagePicker];
 }
 
 @end
